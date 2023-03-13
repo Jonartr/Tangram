@@ -12,6 +12,20 @@ const unsigned int SCR_HEIGHT = 800;
 
 
 //1) Modifica el shader
+const char* vertexShaderSource = "#version 330 core\n"
+"layout (location = 0) in vec3 aPos;\n"
+"void main()\n"
+"{\n"
+"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"}\0";
+const char* fragmentShaderSource = "#version 330 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"}\n\0";
+
+
 const char* vertexShaderSourceWithColor =
 "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
@@ -111,30 +125,20 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
-       -1.0f, 0.5f,0.0f,      1, 0.4, 0.2,  // 0 A
-        0.0f, 0.5f, 0.0f,     1, 1, 1,  // 1 B
-       -1.0f, -0.5f, 0.0f,    1, 0, 0,  // 2 C
+          -1.0f, 0.5f,0.0f,       0.3, 0.6, 0.9,  // 0 A
+          0.0f, 0.5f, 0.0f,       0, 0, 0,  // 1 B
+         -1.0f, -0.5f, 0.0f,      0.6, 0.4, 0.2,  // 2 C
+  
+          0.0f, -0.5f, 0.0f,      0.2, 0.4, 0.6,  // 3 D
+          0.0f, 0.0f, 0.0f,       0, 0, 0,  // 4 E
+         -0.5f, 0.0f, 0.0f,       0.25, 0.75, 0.5,   // 5 F
+          -0.5f, -0.5f, 0.0f,     0.8, 0.95, 0.4,   // 6 H
+  
+           -0.75f, -0.25f,0.0f,   0.5, 0.2, 0.5,   // 7 P
+          -0.25f, -0.25f, 0.0f,   0, 0, 0,   // 8 Q
+           -0.25f, 0.25f, 0.0f,   0, 0, 0,   // 9 R
 
-        0.0f, -0.5f, 0.0f,    0, 0, 1,  // 3 D
-        0.0f, 0.0f, 0.0f,     0, 0.56, 0.149,  // 4 E
-       -0.5f, 0.0f, 0.0f,     0.32, 0.4, 0.9,   // 5 F
-
-       - 0.5f, 0.5f, 0.0f,    0, 1, 0,       // 6 G
-        -0.5f, -0.5f, 0.0f,   0.5, 0.5, 1,       // 7 H
-        -1.0f, 0.0f, 0.0f,    1, 0, 0,        // 8 I
-
-        -1.0f,  0.25f, 0.0f,   1, 0, 0, // 9 J 
-        -0.5f,  0.25f, 0.0f,   0, 4, 0, //10 K
-        0.0f, 0.25f, 0.0f,     0, 0, 0, // 11 L
-
-        -1.0f, -0.25f,0.0f,   1, 0, 0, // 12 M
-        -0.5f, -0.25f, 0.0f,   0.3, 0.5, 0.1,  // 13 N
-         0.0f, -0.25f, 0.0f,    0, 0, 1,  // 14 O
-
-         -0.75f, -0.25f,0.0f,    1, 0.7, 0.4,  // 15 P
-        -0.25f, -0.25f, 0.0f,    0.1, 0.8, 0.3,  // 16 Q
-         -0.25f, 0.25f, 0.0f,     0.1, 0.8, 0.3,  // 17 R
-
+        
 
     };
     float vertices_2[] = {
@@ -160,19 +164,15 @@ int main()
     };
 
     unsigned int indices[] = {  // note that we start from 0!
-        0, 5, 2,  // first Triangle
-        0, 1, 5,   // second Triangle
-
-        7, 4, 3,   // third Triangle
-        16, 17, 4,   // fourth Triangle
-
-        17, 1, 4,
-        5, 17 ,16,
-
-        15, 5, 16,
-        15, 16, 7,
-
-        2, 15, 7
+       0,5,2,
+       0,1,5,
+       2,7,6,
+       7,5,8,
+       8,6,7,
+       5,9,8,
+       9,4,8,
+       9,1,4,
+       6,4,3,
         
     };
     unsigned int VBO, VAO, EBO;
@@ -191,8 +191,8 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     //AGREGA LOS ATRIBUTOS
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+   /* glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);*/
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //Column Major
     glEnableVertexAttribArray(0);
@@ -234,9 +234,9 @@ int main()
         glPointSize(20.0);
 
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        //glDrawArrays(GL_TRIANGLES, 0, 54);
+       /* glDrawArrays(GL_TRIANGLES, 0, 54);*/
         glDrawElements(GL_TRIANGLES, 54, GL_UNSIGNED_INT, 0);
-        // glBindVertexArray(0); // no need to unbind it every time 
+        /* glBindVertexArray(0);*/ // no need to unbind it every time 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -272,3 +272,43 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
+
+//float vertices[] = {
+/* - 1.0f, 0.5f, 0.0f, 1, 0, 0,  // 0 A
+
+0.0f, 0.5f, 0.0f, 1, 0, 0,  // 1 B
+-1.0f, -0.5f, 0.0f, 1, 0, 0,  // 2 C
+
+0.0f, -0.5f, 0.0f, 0, 0, 1,  // 3 D
+0.0f, 0.0f, 0.0f, 0, 0, 1,  // 4 E
+-0.5f, 0.0f, 0.0f, 0, 0, 1,   // 5 F
+-0.5f, -0.5f, 0.0f, 0, 1, 0,   // 6 H
+
+-0.75f, -0.25f, 0.0f, 0, 1, 0,   // 7 P
+-0.25f, -0.25f, 0.0f, 0, 1, 0,   // 8 Q
+-0.25f, 0.25f, 0.0f, 0, 1, 0,   // 9 R*/
+
+      /*-1.0f, 0.5f, 0.0f, 1, 0, 0,  // 0 A
+        0.0f, 0.5f, 0.0f,     1, 0, 0,  // 1 B
+       -1.0f, -0.5f, 0.0f,    1, 0, 0,  // 2 C
+
+        0.0f, -0.5f, 0.0f,    0, 0, 1,  // 3 D
+        0.0f, 0.0f, 0.0f,    0, 0, 1,  // 4 E
+       -0.5f, 0.0f, 0.0f,    0, 0, 1,   // 5 F
+
+       - 0.5f, 0.5f, 0.0f,    0, 1, 0,       // 6 G
+        -0.5f, -0.5f, 0.0f,   0, 1, 0,         // 7 H
+        -1.0f, 0.0f, 0.0f,    0, 1, 0,         // 8 I
+
+        -1.0f,  0.25f, 0.0f,   1, 0, 0, // 9 J 
+        -0.5f,  0.25f, 0.0f,   1, 0, 0,//10 K
+        0.0f, 0.25f, 0.0f,     1, 0, 0, // 11 L
+
+        -1.0f, -0.25f,0.0f,     0, 0, 1,// 12 M
+        -0.5f, -0.25f, 0.0f,     0, 0, 1, // 13 N
+         0.0f, -0.25f, 0.0f,    0, 0, 1,  // 14 O
+
+         -0.75f, -0.25f,0.0f,     0, 1, 0,   // 15 P
+        -0.25f, -0.25f, 0.0f,    0, 1, 0,   // 16 Q
+         -0.25f, 0.25f, 0.0f,      0, 1, 0,   // 17 R*/
+
